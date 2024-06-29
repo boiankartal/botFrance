@@ -13,7 +13,6 @@ class Base(DeclarativeBase, AsyncAttrs):
 
 class User(Base):
     __tablename__ = "users"
-    id: Mapped[int] = mapped_column(primary_key=True)
     tg_id = mapped_column(BigInteger, primary_key=True)
     cours: Mapped[int] = mapped_column(ForeignKey("courses.id"))
 
