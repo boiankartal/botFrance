@@ -20,10 +20,12 @@ class User(Base):
 class Cours(Base):
     __tablename__ = "courses"
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(25))
-    description: Mapped[str] = mapped_column(String(120))
+    name: Mapped[str] = mapped_column()
+    description: Mapped[str] = mapped_column()
     img_tg_id: Mapped[str] = mapped_column()
-    active: Mapped[bool] = mapped_column()
+    active: Mapped[str] = mapped_column()
+    price: Mapped[str] = mapped_column()
+    online_or_record: Mapped[str] = mapped_column()
 
 
 async def async_main():
