@@ -3,6 +3,7 @@ from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from aiogram.filters import CommandStart, Command
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
+from aiogram.enums import ParseMode
 
 router = Router()
 import app.keyboards as kb
@@ -155,6 +156,8 @@ async def add_cours_discriprion(message: Message, state: FSMContext):
             text = "Ошибка!!!"
         await message.answer(text, reply_markup=ReplyKeyboardRemove())
 
+    await admin_menu(message)
+
 
 @router.callback_query(F.data.startswith("cours_"))
 async def get_courses(callback: CallbackQuery):
@@ -162,5 +165,12 @@ async def get_courses(callback: CallbackQuery):
     cours = await rq.get_cours(id_cours)
     await callback.message.answer_photo(
         photo=cours.img_tg_id,
-        caption=f"Имя:{cours.name}\nОписание:\n{cours.description}",
+        caption=f"*Имя:* {cours.name}\n\n*Описание:*\n{cours.description}\n\n*Онлайн/Запись:* {cours.online_or_record}\n\n*Цена:* {cours.price}р",
+        parse_mode=ParseMode.MARKDOWN,
+        reply_markup=await kb.buy_cours(cours.id),
     )
+
+
+# @router.message()
+# async def akjk(message: Message):
+#     print(message)

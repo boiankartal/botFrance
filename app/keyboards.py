@@ -24,7 +24,7 @@ main_admin = InlineKeyboardMarkup(
 
 
 async def get_courses_admin():
-    all_courses = await rq.get_courses()
+    all_courses = await rq.get_courses_admin()
     keyboard = InlineKeyboardBuilder()
     if all_courses:
         for cours in all_courses:
@@ -70,4 +70,16 @@ async def get_courses():
                 InlineKeyboardButton(text=cours.name, callback_data=f"cours_{cours.id}")
             )
     keyboard.add(InlineKeyboardButton(text="Назад", callback_data="back"))
+    return keyboard.adjust(1).as_markup()
+
+
+async def buy_cours(id):
+    keyboard = InlineKeyboardBuilder()
+
+    keyboard.add(
+        InlineKeyboardButton(text="Купить", callback_data=f"buy_cours_{id}"),
+    )
+    keyboard.add(
+        InlineKeyboardButton(text="Назад", callback_data="back"),
+    )
     return keyboard.adjust(1).as_markup()
