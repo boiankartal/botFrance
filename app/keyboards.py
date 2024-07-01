@@ -30,7 +30,7 @@ async def get_courses_admin():
         for cours in all_courses:
             keyboard.add(
                 InlineKeyboardButton(
-                    text=cours.name, callback_data=f"cours_admin_{cours.id}"
+                    text=cours.name, callback_data=f"coursAdmin_{cours.id}"
                 )
             )
     keyboard.add(InlineKeyboardButton(text="+ Новый курс", callback_data="add_cours"))
@@ -81,5 +81,23 @@ async def buy_cours(id):
     )
     keyboard.add(
         InlineKeyboardButton(text="Назад", callback_data="back"),
+    )
+    return keyboard.adjust(1).as_markup()
+
+
+async def edit_list(id, message_id):
+    keyboard = InlineKeyboardBuilder()
+    cours = await rq.get_cours(id)
+    keyboard.add(
+        InlineKeyboardButton(text="Изменить название", callback_data=f"editName_{id}"),
+        InlineKeyboardButton(
+            text="Изменить описание", callback_data=f"editDescription_{id}"
+        ),
+        InlineKeyboardButton(text="Изменить цену", callback_data=f"editPrice_{id}"),
+        InlineKeyboardButton(
+            text=f"Активный: {cours.active}",
+            callback_data=f"editActive_{id}_{message_id}",
+        ),
+        InlineKeyboardButton(text="Удалить курс", callback_data=f"delete_cours_{id}"),
     )
     return keyboard.adjust(1).as_markup()

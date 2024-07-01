@@ -28,7 +28,7 @@ async def start(message: Message):
 
 
 async def main(message):
-    await message.answer(text="🥖 Главное меню", reply_markup=kb.main)
+    await message.answer(text="🥐 Главное меню", reply_markup=kb.main)
 
 
 @router.callback_query(F.data == "cours")
@@ -160,14 +160,31 @@ async def add_cours_discriprion(message: Message, state: FSMContext):
 
 
 @router.callback_query(F.data.startswith("cours_"))
-async def get_courses(callback: CallbackQuery):
+async def get_cours(callback: CallbackQuery):
+    id_cours = callback.data.split("_")[1]
+    cours = await rq.get_cours(id_cours)
+    if cours.online_or_record == "Онлайн":
+        text = f"После покупки курса вы получите доступ к группе, где вы будете:\n 1. Общаться с репетитором\n 2. Получать материалы, которые используются на занятиях\n 3. ...."
+    if cours.online_or_record == "Запись":
+        text = f"После покупки вы получите архив с курсом"
+
+    await callback.message.answer_photo(
+        photo=cours.img_tg_id,
+        caption=f"*Информация о курсе*\n\n*Название:* {cours.name}\n\n*Описание:*\n{cours.description}\n\n*Онлайн/Запись:* {cours.online_or_record}\n\n*Цена:* {cours.price}р \n\n`{text}`",
+        parse_mode=ParseMode.MARKDOWN,
+        reply_markup=await kb.buy_cours(cours.id),
+    )
+
+
+@router.callback_query(F.data.startswith("coursAdmin"))
+async def get_cours_admin(callback: CallbackQuery):
     id_cours = callback.data.split("_")[1]
     cours = await rq.get_cours(id_cours)
     await callback.message.answer_photo(
         photo=cours.img_tg_id,
-        caption=f"*Имя:* {cours.name}\n\n*Описание:*\n{cours.description}\n\n*Онлайн/Запись:* {cours.online_or_record}\n\n*Цена:* {cours.price}р",
+        caption=f"*Информация о курсе*\n\n*Название:* {cours.name}\n\n*Описание:*\n{cours.description}\n\n*Онлайн/Запись:* {cours.online_or_record}\n\n*Цена:* {cours.price}р",
         parse_mode=ParseMode.MARKDOWN,
-        reply_markup=await kb.buy_cours(cours.id),
+        reply_markup=await kb.edit_list(cours.id, callback.message.message_id),
     )
 
 
