@@ -96,8 +96,11 @@ async def edit_list(id, message_id):
         InlineKeyboardButton(text="Изменить цену", callback_data=f"editPrice_{id}"),
         InlineKeyboardButton(
             text=f"Активный: {cours.active}",
-            callback_data=f"editActive_{id}_{message_id}",
+            callback_data=f"editActive_{id}",
         ),
         InlineKeyboardButton(text="Удалить курс", callback_data=f"delete_cours_{id}"),
+    )
+    keyboard.add(
+        InlineKeyboardButton(text="Назад", callback_data="back"),
     )
     return keyboard.adjust(1).as_markup()

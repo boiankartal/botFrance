@@ -9,6 +9,8 @@ router = Router()
 import app.keyboards as kb
 import app.database.requests as rq
 
+url_bot = "https://t.me/frantessstbot"
+
 
 # FSM состояние
 class Add_cours(StatesGroup):
@@ -20,11 +22,49 @@ class Add_cours(StatesGroup):
     online_or_record = State()
 
 
+class editName(StatesGroup):
+    new_name = State()
+    id = State()
+    callback = State()
+
+
+class editDescription(StatesGroup):
+    new_description = State()
+    id = State()
+    callback = State()
+
+
+class editPrice(StatesGroup):
+    new_price = State()
+    id = State()
+    callback = State()
+
+
 @router.message(Command("start"))
 async def start(message: Message):
     await rq.set_user(message.from_user.id)
     await message.answer("Добро пожаловать")
-    await main(message)
+    if not message.text:
+        await main(message)
+    if "coursID" in message.text:
+        id = message.text.split("_")[1]
+        await get_url_cours(id, message)
+
+
+async def get_url_cours(id, message):
+    id_cours = id
+    cours = await rq.get_cours(id_cours)
+    if cours.online_or_record == "Онлайн":
+        text = f"После покупки курса вы получите доступ к группе, где вы будете:\n 1. Общаться с репетитором\n 2. Получать материалы, которые используются на занятиях\n 3. ...."
+    if cours.online_or_record == "Запись":
+        text = f"После покупки вы получите архив с курсом"
+
+    await message.answer_photo(
+        photo=cours.img_tg_id,
+        caption=f"*Информация о курсе*\n\n*Название:* {cours.name}\n\n*Описание:*\n{cours.description}\n\n*Онлайн/Запись:* {cours.online_or_record}\n\n*Цена:* {cours.price}р \n\n`{text}`",
+        parse_mode=ParseMode.MARKDOWN,
+        reply_markup=await kb.buy_cours(cours.id),
+    )
 
 
 async def main(message):
@@ -180,14 +220,87 @@ async def get_cours(callback: CallbackQuery):
 async def get_cours_admin(callback: CallbackQuery):
     id_cours = callback.data.split("_")[1]
     cours = await rq.get_cours(id_cours)
+    url = url_bot + f"?start=coursID_{cours.id}"
     await callback.message.answer_photo(
         photo=cours.img_tg_id,
-        caption=f"*Информация о курсе*\n\n*Название:* {cours.name}\n\n*Описание:*\n{cours.description}\n\n*Онлайн/Запись:* {cours.online_or_record}\n\n*Цена:* {cours.price}р",
+        caption=f"*Информация о курсе*\n\n*Название:* {cours.name}\n\n*Описание:*\n{cours.description}\n\n*Онлайн/Запись:* {cours.online_or_record}\n\n*Цена:* {cours.price}р\n\n*Ссылка на курс:*\n`{url}`",
         parse_mode=ParseMode.MARKDOWN,
         reply_markup=await kb.edit_list(cours.id, callback.message.message_id),
     )
 
 
-# @router.message()
-# async def akjk(message: Message):
-#     print(message)
+@router.callback_query(F.data.startswith("editActive"))
+async def editActive(callback: CallbackQuery):
+    await rq.editActive(callback.data.split("_")[1])
+    await callback.message.delete()
+    await get_cours_admin(callback)
+
+
+@router.callback_query(F.data.startswith("delete_cours"))
+async def delete_cours(callback: CallbackQuery):
+    await rq.delete_cours(callback.data.split("_")[2])
+    await callback.message.delete()
+    await callback.message.answer("Курс успешно удален!")
+    await get_courses_admin(callback)
+
+
+@router.callback_query(F.data.startswith("editName"))
+async def editName_1(callback: CallbackQuery, state: FSMContext):
+    await state.set_state(editName.id)
+    await state.update_data(id=callback.data.split("_")[1])
+    await state.set_state(editName.callback)
+    await state.update_data(callback=callback)
+    await state.set_state(editName.new_name)
+    await callback.message.answer("Напишите новое имя")
+
+
+@router.message(editName.new_name)
+async def editName_update(message: Message, state: FSMContext):
+    await state.update_data(new_name=message.text)
+    data = await state.get_data()
+    await state.clear()
+    status = await rq.editName(data["id"], data["new_name"])
+    await message.answer("Успешно!!!")
+    await get_courses_admin(data["callback"])
+
+
+##########################################################################################
+@router.callback_query(F.data.startswith("editDescription"))
+async def editDescription_1(callback: CallbackQuery, state: FSMContext):
+    await state.set_state(editDescription.id)
+    await state.update_data(id=callback.data.split("_")[1])
+    await state.set_state(editDescription.callback)
+    await state.update_data(callback=callback)
+    await state.set_state(editDescription.new_description)
+    await callback.message.answer("Напишите новое описание курса")
+
+
+@router.message(editDescription.new_description)
+async def editDescription_update(message: Message, state: FSMContext):
+    await state.update_data(new_description=message.text)
+    data = await state.get_data()
+    await state.clear()
+    status = await rq.editDescription(data["id"], data["new_description"])
+    await message.answer("Успешно!!!")
+    await get_courses_admin(data["callback"])
+
+
+#######################################################################################################
+@router.callback_query(F.data.startswith("editPrice"))
+async def editPrice_1(callback: CallbackQuery, state: FSMContext):
+    await state.set_state(editPrice.id)
+    await state.update_data(id=callback.data.split("_")[1])
+    await state.set_state(editPrice.callback)
+    await state.update_data(callback=callback)
+    await state.set_state(editPrice.new_price)
+    await callback.message.answer("Укажи новую цену")
+
+
+@router.message(editPrice.new_price)
+async def editPrice_update(message: Message, state: FSMContext):
+    await state.update_data(new_price=message.text)
+    data = await state.get_data()
+    await state.clear()
+    status = await rq.editPrice(data["id"], data["new_price"])
+    await message.answer("Успешно!!!")
+    await get_courses_admin(data["callback"])
