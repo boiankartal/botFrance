@@ -44,8 +44,8 @@ class editPrice(StatesGroup):
 async def start(message: Message):
     await rq.set_user(message.from_user.id)
     await message.answer("Добро пожаловать")
-    if not message.text:
-        await main(message)
+
+    await main(message)
     if "coursID" in message.text:
         id = message.text.split("_")[1]
         await get_url_cours(id, message)

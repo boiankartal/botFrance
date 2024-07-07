@@ -7,9 +7,9 @@ from app.database.models import async_main
 
 
 async def main():
-    bot = Bot(token=os.getenv("TOKEN"))
     dp = Dispatcher()
     load_dotenv()
+    bot = Bot(token=os.getenv("TOKEN"))
     await async_main()
     dp.include_router(router)
     await dp.start_polling(bot)
