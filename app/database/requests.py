@@ -115,3 +115,13 @@ async def editPrice(id, new_price):
         return 200
     except:
         return 500
+
+
+async def get_user(tg_id):
+    try:
+        async with async_session() as session:
+            user = await session.scalar(select(User).where(User.tg_id == tg_id))
+            return user
+
+    except:
+        return 500

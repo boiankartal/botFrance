@@ -10,8 +10,8 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 main = InlineKeyboardMarkup(
     inline_keyboard=[
         [InlineKeyboardButton(text="Курсы", callback_data="cours")],
-        [InlineKeyboardButton(text="Профиль", callback_data="cours")],
-        [InlineKeyboardButton(text="Поддержка", callback_data="cours")],
+        [InlineKeyboardButton(text="Профиль", callback_data="profile")],
+        [InlineKeyboardButton(text="Поддержка", callback_data="support")],
     ]
 )
 
@@ -104,3 +104,8 @@ async def edit_list(id, message_id):
         InlineKeyboardButton(text="Назад", callback_data="back"),
     )
     return keyboard.adjust(1).as_markup()
+
+
+back = InlineKeyboardMarkup(
+    inline_keyboard=[[InlineKeyboardButton(text="Назад", callback_data="back")]]
+)

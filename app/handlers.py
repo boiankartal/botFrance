@@ -304,3 +304,27 @@ async def editPrice_update(message: Message, state: FSMContext):
     status = await rq.editPrice(data["id"], data["new_price"])
     await message.answer("Успешно!!!")
     await get_courses_admin(data["callback"])
+
+
+@router.callback_query(F.data == "profile")
+async def profile(callback: CallbackQuery):
+    user = await rq.get_user(callback.message.chat.id)
+    cours = await rq.get_cours(user.cours)
+    if not cours:
+        text = ""
+    else:
+        text = cours.name
+    await callback.message.answer(
+        f"*Ваш профиль*\n\n*Имя:* {callback.message.chat.full_name}\n\n*ID:* {user.tg_id}\n\n*Курс:* {text}",
+        parse_mode=ParseMode.MARKDOWN,
+        reply_markup=kb.back,
+    )
+
+
+@router.callback_query(F.data == "support")
+async def support(callback: CallbackQuery):
+    await callback.message.answer(
+        "Свяжитесь с нами @pawwvw",
+        parse_mode=ParseMode.MARKDOWN,
+        reply_markup=kb.back,
+    )
