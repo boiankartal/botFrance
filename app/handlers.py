@@ -4,12 +4,15 @@ from aiogram.filters import CommandStart, Command
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 from aiogram.enums import ParseMode
+import os
 
 router = Router()
 import app.keyboards as kb
-import app.database.requests as rq
+import app.database.request as rq
+from dotenv import load_dotenv
 
 url_bot = "https://t.me/frantessstbot"
+load_dotenv()
 
 
 # FSM состояние
@@ -328,3 +331,16 @@ async def support(callback: CallbackQuery):
         parse_mode=ParseMode.MARKDOWN,
         reply_markup=kb.back,
     )
+
+
+# @router.message(Command("broadcasts"))
+# async def broadcast(message: Message):
+#     if message.from_user.id == int(os.getenv("admin_id_1")):
+#         # text_to_send = message.get_args()
+#         users = await rq.get_users()
+#         print(users)
+#         for user in users:
+#             # try:
+#             await
+#         # except:
+#         # continue

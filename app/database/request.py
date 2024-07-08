@@ -125,3 +125,13 @@ async def get_user(tg_id):
 
     except:
         return 500
+
+
+async def get_users():
+    # try:
+    async with async_session() as session:
+        return await session.scalars(select(User))
+
+
+# except:
+# return 500
