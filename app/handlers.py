@@ -43,6 +43,11 @@ class editPrice(StatesGroup):
     callback = State()
 
 
+@router.message(Command("menu"))
+async def to_menu(message: Message):
+    await main(message)
+
+
 @router.message(Command("start"))
 async def start(message: Message):
     await rq.set_user(message.from_user.id)

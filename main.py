@@ -96,7 +96,12 @@ async def broadcast_photo_2(message: Message, state: FSMContext):
         await message.answer("Рассылка началась", reply_markup=ReplyKeyboardRemove())
         for user in users:
             try:
-                await bot.send_photo(chat_id=user.tg_id, photo=data["media"],  caption=f"{data["text"]}", parse_mode=ParseMode.MARKDOWN)
+                await bot.send_photo(
+                    chat_id=user.tg_id,
+                    photo=data["media"],
+                    caption=f"{data['text']}",
+                    parse_mode=ParseMode.MARKDOWN,
+                )
             except:
                 continue
 
