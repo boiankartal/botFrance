@@ -51,7 +51,9 @@ async def to_menu(message: Message):
 @router.message(Command("start"))
 async def start(message: Message):
     await rq.set_user(message.from_user.id)
-    await message.answer("Добро пожаловать")
+    await message.answer(
+        "Привет! 👋\n\nДобро пожаловать в наш бот для изучения французского языка. Я ваш помощник и консультант по курсам"
+    )
 
     await main(message)
     if "coursID" in message.text:
