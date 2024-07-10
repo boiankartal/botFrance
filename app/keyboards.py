@@ -9,12 +9,23 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 main = InlineKeyboardMarkup(
     inline_keyboard=[
-        [InlineKeyboardButton(text="Курсы", callback_data="cours")],
+        [InlineKeyboardButton(text="Обучение", callback_data="study")],
         [InlineKeyboardButton(text="Профиль", callback_data="profile")],
         [InlineKeyboardButton(text="Поддержка", callback_data="support")],
     ]
 )
 
+study = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(
+                text="Индивидуальные занятия", callback_data="individual"
+            )
+        ],
+        [InlineKeyboardButton(text="Онлайн курсы", callback_data="cours")],
+        [InlineKeyboardButton(text="Назад", callback_data="back_to_menu")],
+    ]
+)
 
 main_admin = InlineKeyboardMarkup(
     inline_keyboard=[

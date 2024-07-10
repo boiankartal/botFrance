@@ -88,6 +88,24 @@ async def get_courses(callback: CallbackQuery):
     )
 
 
+@router.callback_query(F.data == "study")
+async def study(callback: CallbackQuery):
+    await callback.message.edit_text(
+        "Доступные варианты обучения", reply_markup=kb.study
+    )
+
+
+@router.callback_query(F.data == "back_to_menu")
+async def back_to_menu_1(callback: CallbackQuery):
+    await callback.message.delete()
+    await main(callback.message)
+
+
+@router.callback_query(F.data == "individual")
+async def individual(callback: CallbackQuery):
+    await callback.message.answer("ИНФА ПО ИНД. ЗАНЯТИЯМ", reply_markup=kb.back)
+
+
 @router.message(Command("admin_123"))
 async def admin_menu(message: Message):
     await message.answer("Меню админа", reply_markup=kb.main_admin)
