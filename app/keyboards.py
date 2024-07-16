@@ -2,16 +2,16 @@ from aiogram.types import (
     ReplyKeyboardMarkup,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
-    KeyboardButton,
+    KeyboardButton, WebAppInfo,
 )
 import app.database.request as rq
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 main = InlineKeyboardMarkup(
     inline_keyboard=[
-        [InlineKeyboardButton(text="Обучение", callback_data="study")],
-        [InlineKeyboardButton(text="Профиль", callback_data="profile")],
-        [InlineKeyboardButton(text="Поддержка", callback_data="support")],
+        [InlineKeyboardButton(text="📚 Обучение", callback_data="study")],
+        [InlineKeyboardButton(text="💻 Профиль", callback_data="profile")],
+        [InlineKeyboardButton(text="📬 Поддержка", callback_data="support")],
     ]
 )
 
@@ -19,13 +19,26 @@ study = InlineKeyboardMarkup(
     inline_keyboard=[
         [
             InlineKeyboardButton(
-                text="Индивидуальные занятия", callback_data="individual"
+                text="📙 Индивидуальные занятия", callback_data="individual"
             )
         ],
-        [InlineKeyboardButton(text="Онлайн курсы", callback_data="cours")],
-        [InlineKeyboardButton(text="Назад", callback_data="back_to_menu")],
+        [InlineKeyboardButton(text="📗 Онлайн курсы", callback_data="cours")],
+        [InlineKeyboardButton(text="🚫 Назад", callback_data="back_to_menu")],
     ]
 )
+
+individual_back = InlineKeyboardMarkup(
+    inline_keyboard=[[InlineKeyboardButton(text="🚫 Назад", callback_data="to_study_menu")
+                      ]]
+)
+
+# profile = InlineKeyboardMarkup(
+#     inline_keyboard=[[InlineKeyboardButton(text="Назад", callback_data="back_to_menu")]]
+# )
+#
+# support = InlineKeyboardMarkup(
+#     inline_keyboard=[[InlineKeyboardButton(text="Назад", callback_data="back_to_menu")]]
+# )
 
 main_admin = InlineKeyboardMarkup(
     inline_keyboard=[
@@ -80,19 +93,22 @@ async def get_courses():
             keyboard.add(
                 InlineKeyboardButton(text=cours.name, callback_data=f"cours_{cours.id}")
             )
-    keyboard.add(InlineKeyboardButton(text="Назад", callback_data="back"))
+    keyboard.add(InlineKeyboardButton(text="🚫 Назад", callback_data="to_study_menu"))
     return keyboard.adjust(1).as_markup()
 
 
 async def buy_cours(id):
     keyboard = InlineKeyboardBuilder()
+    keyboard.add(
+        InlineKeyboardButton(text="🔎 Узнать больше", web_app=WebAppInfo(url="https://telegra.ph/Super-kurs-po-francuzskomu-07-16")),
+    )
+    keyboard.add(
+        InlineKeyboardButton(text="💳 Купить", callback_data=f"buy_cours_{id}"),
+    )
+    keyboard.add(
+        InlineKeyboardButton(text="🚫 Назад", callback_data="back"),
+    )
 
-    keyboard.add(
-        InlineKeyboardButton(text="Купить", callback_data=f"buy_cours_{id}"),
-    )
-    keyboard.add(
-        InlineKeyboardButton(text="Назад", callback_data="back"),
-    )
     return keyboard.adjust(1).as_markup()
 
 
@@ -118,5 +134,5 @@ async def edit_list(id, message_id):
 
 
 back = InlineKeyboardMarkup(
-    inline_keyboard=[[InlineKeyboardButton(text="Назад", callback_data="back")]]
+    inline_keyboard=[[InlineKeyboardButton(text="🚫 Назад", callback_data="back")]]
 )

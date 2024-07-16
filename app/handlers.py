@@ -1,10 +1,9 @@
 from aiogram import F, Router
 from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
-from aiogram.filters import CommandStart, Command
+from aiogram.filters import Command
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 from aiogram.enums import ParseMode
-import os
 
 router = Router()
 import app.keyboards as kb
@@ -64,6 +63,7 @@ async def start(message: Message):
 async def get_url_cours(id, message):
     id_cours = id
     cours = await rq.get_cours(id_cours)
+    text=''
     if cours.online_or_record == "Онлайн":
         text = f"После покупки курса вы получите доступ к группе, где вы будете:\n 1. Общаться с репетитором\n 2. Получать материалы, которые используются на занятиях\n 3. ...."
     if cours.online_or_record == "Запись":
@@ -83,8 +83,15 @@ async def main(message):
 
 @router.callback_query(F.data == "cours")
 async def get_courses(callback: CallbackQuery):
-    await callback.message.answer(
+    await callback.message.edit_text(
         "Список доступных курсов", reply_markup=await kb.get_courses()
+    )
+
+
+@router.callback_query(F.data == "to_study_menu")
+async def to_study_menu(callback: CallbackQuery):
+    await callback.message.edit_text(
+        "Доступные варианты обучения", reply_markup=kb.study
     )
 
 
@@ -97,13 +104,12 @@ async def study(callback: CallbackQuery):
 
 @router.callback_query(F.data == "back_to_menu")
 async def back_to_menu_1(callback: CallbackQuery):
-    await callback.message.delete()
-    await main(callback.message)
+    await callback.message.edit_text(text="🥐 Главное меню", reply_markup=kb.main)
 
 
 @router.callback_query(F.data == "individual")
 async def individual(callback: CallbackQuery):
-    await callback.message.answer("ИНФА ПО ИНД. ЗАНЯТИЯМ", reply_markup=kb.back)
+    await callback.message.edit_text("ИНФА ПО ИНД. ЗАНЯТИЯМ", reply_markup=kb.individual_back)
 
 
 @router.message(Command("admin_123"))
@@ -231,6 +237,7 @@ async def add_cours_discriprion(message: Message, state: FSMContext):
 async def get_cours(callback: CallbackQuery):
     id_cours = callback.data.split("_")[1]
     cours = await rq.get_cours(id_cours)
+    text = ''
     if cours.online_or_record == "Онлайн":
         text = f"После покупки курса вы получите доступ к группе, где вы будете:\n 1. Общаться с репетитором\n 2. Получать материалы, которые используются на занятиях\n 3. ...."
     if cours.online_or_record == "Запись":
@@ -356,7 +363,6 @@ async def support(callback: CallbackQuery):
         parse_mode=ParseMode.MARKDOWN,
         reply_markup=kb.back,
     )
-
 
 # @router.message(Command("broadcasts"))
 # async def broadcast(message: Message):
