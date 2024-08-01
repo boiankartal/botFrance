@@ -448,7 +448,7 @@ async def profile(callback: CallbackQuery):
     else:
         text = cours.name
     await callback.message.answer(
-        f"*Ваш профиль*\n\n*Имя:* {callback.message.chat.full_name}\n\n*ID:* {user.tg_id}\n\n*Курс:* {text}",
+        f"*Ваш профиль*\n\n*Имя:* {callback.message.chat.full_name}\n\n*ID:* {user.tg_id}",
         parse_mode=ParseMode.MARKDOWN,
         reply_markup=kb.back,
     )
