@@ -22,7 +22,7 @@ study = InlineKeyboardMarkup(
                 text="📙 Индивидуальные занятия", callback_data="individual"
             )
         ],
-        [InlineKeyboardButton(text="📗 Онлайн курсы", callback_data="cours")],
+        [InlineKeyboardButton(text="📗 Онлайн-курсы", callback_data="cours")],
         [InlineKeyboardButton(text="🚫 Назад", callback_data="back_to_menu")],
     ]
 )
@@ -62,19 +62,20 @@ async def get_courses_admin():
     return keyboard.adjust(1).as_markup()
 
 
-cuors_active_or_not = ReplyKeyboardMarkup(
-    keyboard=[
-        [KeyboardButton(text="Нет")],
-        [KeyboardButton(text="Да")],
-        [KeyboardButton(text="Сбросить")],
+cuors_active_or_not = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [InlineKeyboardButton(text="Нет", callback_data="active_no")],
+        [InlineKeyboardButton(text="Да", callback_data="active_ye")],
+        [InlineKeyboardButton(text="Сбросить", callback_data="active_back")],
     ]
 )
 
-cuors_online_or_record = ReplyKeyboardMarkup(
-    keyboard=[
-        [KeyboardButton(text="Запись")],
-        [KeyboardButton(text="Онлайн")],
-        [KeyboardButton(text="Сбросить")],
+
+cuors_online_or_record = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [InlineKeyboardButton(text="Запись", callback_data="online_record")],
+        [InlineKeyboardButton(text="Онлайн", callback_data="online_online")],
+        [InlineKeyboardButton(text="Сбросить", callback_data="online_back")],
     ]
 )
 
@@ -99,11 +100,10 @@ async def get_courses():
 
 async def buy_cours(id):
     keyboard = InlineKeyboardBuilder()
+    cours = await rq.get_url_cours(id)
+
     keyboard.add(
-        InlineKeyboardButton(text="🔎 Узнать больше", web_app=WebAppInfo(url="https://telegra.ph/Super-kurs-po-francuzskomu-07-16")),
-    )
-    keyboard.add(
-        InlineKeyboardButton(text="💳 Купить", callback_data=f"buy_cours_{id}"),
+        InlineKeyboardButton(text="🔎 Узнать больше", web_app=WebAppInfo(url=f"{cours.url}")),
     )
     keyboard.add(
         InlineKeyboardButton(text="🚫 Назад", callback_data="back"),
@@ -121,6 +121,8 @@ async def edit_list(id, message_id):
             text="Изменить описание", callback_data=f"editDescription_{id}"
         ),
         InlineKeyboardButton(text="Изменить цену", callback_data=f"editPrice_{id}"),
+        InlineKeyboardButton(text="Изменить расписание", callback_data=f"editDates_{id}"),
+        InlineKeyboardButton(text="Изменить превью", callback_data=f"editImage_{id}"),
         InlineKeyboardButton(
             text=f"Активный: {cours.active}",
             callback_data=f"editActive_{id}",

@@ -44,7 +44,10 @@ async def set_new_cours(data):
                     img_tg_id=data["img_id"],
                     active=data["active"],
                     price=data["price"],
+                    dates=data["dates"],
+                    main=data["main"],
                     online_or_record=data["online_or_record"],
+                    url=data["url"]
                 )
             )
             await session.commit()
@@ -92,6 +95,28 @@ async def editName(id, new_name):
     except:
         return 500
 
+async def editDates(id, new_name):
+    try:
+        async with async_session() as session:
+            await session.execute(
+                update(Cours).where(Cours.id == id).values(name=new_name)
+            )
+            await session.commit()
+        return 200
+    except:
+        return 500
+
+async def editImages(id, new_images):
+    try:
+        async with async_session() as session:
+            await session.execute(
+                update(Cours).where(Cours.id == id).values(img_tg_id=new_images)
+            )
+            await session.commit()
+        return 200
+    except:
+        return 500
+
 
 async def editDescription(id, new_description):
     try:
@@ -128,10 +153,17 @@ async def get_user(tg_id):
 
 
 async def get_users():
-    # try:
-    async with async_session() as session:
-        return await session.scalars(select(User))
+    try:
+        async with async_session() as session:
+            return await session.scalars(select(User))
+    except:
+        return 500
 
 
-# except:
-# return 500
+async def get_url_cours(id):
+    try:
+        async with async_session() as session:
+            cours = await session.scalar(select(Cours).where(Cours.id == id))
+            return cours
+    except:
+        return 500

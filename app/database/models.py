@@ -24,8 +24,11 @@ class Cours(Base):
     description: Mapped[str] = mapped_column()
     img_tg_id: Mapped[str] = mapped_column()
     active: Mapped[str] = mapped_column()
+    dates: Mapped[str] = mapped_column()
+    main: Mapped[str] = mapped_column()
     price: Mapped[str] = mapped_column()
     online_or_record: Mapped[str] = mapped_column()
+    url: Mapped[str] = mapped_column()
 
 
 async def async_main():
